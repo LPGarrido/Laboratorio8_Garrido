@@ -71,8 +71,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [v __delay `JF36 ~T0 @X0 0 e ]
 [p i __delay ]
 "53 main_lab8.c
-[; ;main_lab8.c: 53: void obtener_valor(uint16_t VALOR);
-[v _obtener_valor `(v ~T0 @X0 0 ef1`ui ]
+[; ;main_lab8.c: 53: void obtener_valor(int VALOR);
+[v _obtener_valor `(v ~T0 @X0 0 ef1`i ]
 "54
 [; ;main_lab8.c: 54: void set_display(uint8_t VALORES0, uint8_t VALORES1, uint8_t VALORES2);
 [v _set_display `(v ~T0 @X0 0 ef3`uc`uc`uc ]
@@ -428,10 +428,10 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;C:/Program Files/Microchip/MPLABX/v6.00/packs/Microchip/PIC16Fxxx_DFP/1.3.42/xc8\pic\include\proc\pic16f887.h: 3547: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
 "42 main_lab8.c
-[; ;main_lab8.c: 42: uint16_t t_ADRESH2 = 0;
-[v _t_ADRESH2 `ui ~T0 @X0 1 e ]
+[; ;main_lab8.c: 42: int t_ADRESH2 = 0;
+[v _t_ADRESH2 `i ~T0 @X0 1 e ]
 [i _t_ADRESH2
--> -> 0 `i `ui
+-> 0 `i
 ]
 "43
 [; ;main_lab8.c: 43: uint8_t temp = 0;
@@ -516,8 +516,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e $ ! == -> . . _ADCON0bits 0 2 `i -> 1 `i 142  ]
 {
 "66
-[; ;main_lab8.c: 66:             t_ADRESH2 = (ADRESH*2);
-[e = _t_ADRESH2 -> * -> _ADRESH `i -> 2 `i `ui ]
+[; ;main_lab8.c: 66:             t_ADRESH2 = (ADRESH*100/51);
+[e = _t_ADRESH2 / * -> _ADRESH `i -> 100 `i -> 51 `i ]
 "67
 [; ;main_lab8.c: 67:         }
 }
@@ -734,21 +734,21 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e :UE 154 ]
 }
 "156
-[; ;main_lab8.c: 156: void obtener_valor(uint16_t VALOR){
-[v _obtener_valor `(v ~T0 @X0 1 ef1`ui ]
+[; ;main_lab8.c: 156: void obtener_valor(int VALOR){
+[v _obtener_valor `(v ~T0 @X0 1 ef1`i ]
 {
 [e :U _obtener_valor ]
-[v _VALOR `ui ~T0 @X0 1 r1 ]
+[v _VALOR `i ~T0 @X0 1 r1 ]
 [f ]
 "157
 [; ;main_lab8.c: 157:     valores[2] = VALOR/100;
-[e = *U + &U _valores * -> -> -> 2 `i `ui `ux -> -> # *U &U _valores `ui `ux -> / _VALOR -> -> 100 `i `ui `uc ]
+[e = *U + &U _valores * -> -> -> 2 `i `ui `ux -> -> # *U &U _valores `ui `ux -> / _VALOR -> 100 `i `uc ]
 "158
 [; ;main_lab8.c: 158:     valores[1] = (VALOR-valores[2]*100)/10;
-[e = *U + &U _valores * -> -> -> 1 `i `ui `ux -> -> # *U &U _valores `ui `ux -> / - _VALOR -> * -> *U + &U _valores * -> -> -> 2 `i `ui `ux -> -> # *U &U _valores `ui `ux `i -> 100 `i `ui -> -> 10 `i `ui `uc ]
+[e = *U + &U _valores * -> -> -> 1 `i `ui `ux -> -> # *U &U _valores `ui `ux -> / - _VALOR * -> *U + &U _valores * -> -> -> 2 `i `ui `ux -> -> # *U &U _valores `ui `ux `i -> 100 `i -> 10 `i `uc ]
 "159
 [; ;main_lab8.c: 159:     valores[0] = VALOR-valores[2]*100-valores[1]*10;
-[e = *U + &U _valores * -> -> -> 0 `i `ui `ux -> -> # *U &U _valores `ui `ux -> - - _VALOR -> * -> *U + &U _valores * -> -> -> 2 `i `ui `ux -> -> # *U &U _valores `ui `ux `i -> 100 `i `ui -> * -> *U + &U _valores * -> -> -> 1 `i `ui `ux -> -> # *U &U _valores `ui `ux `i -> 10 `i `ui `uc ]
+[e = *U + &U _valores * -> -> -> 0 `i `ui `ux -> -> # *U &U _valores `ui `ux -> - - _VALOR * -> *U + &U _valores * -> -> -> 2 `i `ui `ux -> -> # *U &U _valores `ui `ux `i -> 100 `i * -> *U + &U _valores * -> -> -> 1 `i `ui `ux -> -> # *U &U _valores `ui `ux `i -> 10 `i `uc ]
 "160
 [; ;main_lab8.c: 160: }
 [e :UE 155 ]

@@ -2649,7 +2649,7 @@ extern __bank0 __bit __timeout;
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.35\\pic\\include\\c90\\stdint.h" 1 3
 # 30 "main_lab8.c" 2
 # 42 "main_lab8.c"
-uint16_t t_ADRESH2 = 0;
+int t_ADRESH2 = 0;
 uint8_t temp = 0;
 uint8_t banderas = 0;
 uint8_t valores[3]={0,0,0};
@@ -2660,7 +2660,7 @@ uint8_t TABLA[16]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0
 
 void setup(void);
 void RESET_TMR0(uint8_t TMR_VAR);
-void obtener_valor(uint16_t VALOR);
+void obtener_valor(int VALOR);
 void set_display(uint8_t VALORES0, uint8_t VALORES1, uint8_t VALORES2);
 void mostrar_valor(uint8_t DISPLAY0, uint8_t DISPLAY1, uint8_t DISPLAY2);
 
@@ -2673,7 +2673,7 @@ void __attribute__((picinterrupt(("")))) isr (void){
         }
 
         else if (ADCON0bits.CHS == 1){
-            t_ADRESH2 = (ADRESH*2);
+            t_ADRESH2 = (ADRESH*100/51);
         }
         PIR1bits.ADIF = 0;
     }
@@ -2763,7 +2763,7 @@ void RESET_TMR0(uint8_t TMR_VAR){
     return;
 }
 
-void obtener_valor(uint16_t VALOR){
+void obtener_valor(int VALOR){
     valores[2] = VALOR/100;
     valores[1] = (VALOR-valores[2]*100)/10;
     valores[0] = VALOR-valores[2]*100-valores[1]*10;

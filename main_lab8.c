@@ -39,7 +39,7 @@
 /*------------------------------------------------------------------------------
  * VARIABLES 
  ------------------------------------------------------------------------------*/
-uint16_t t_ADRESH2 = 0;
+int t_ADRESH2 = 0;
 uint8_t temp = 0;
 uint8_t banderas = 0;           // banderas para el display
 uint8_t valores[3]={0,0,0};     // unidades, decenas y centenas del valor
@@ -50,7 +50,7 @@ uint8_t TABLA[16]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0
  ------------------------------------------------------------------------------*/
 void setup(void);
 void RESET_TMR0(uint8_t TMR_VAR);   // resetear tmr0
-void obtener_valor(uint16_t VALOR);  // obtener uni,dec,cen del valor
+void obtener_valor(int VALOR);  // obtener uni,dec,cen del valor
 void set_display(uint8_t VALORES0, uint8_t VALORES1, uint8_t VALORES2);     // Seleccionar valor para el display
 void mostrar_valor(uint8_t DISPLAY0, uint8_t DISPLAY1, uint8_t DISPLAY2);   // Mostrar valor en el display
 /*------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ void __interrupt() isr (void){
         }
         // *En caso de estar usando mas de un canal anal?gico
         else if (ADCON0bits.CHS == 1){
-            t_ADRESH2 = (ADRESH*2);
+            t_ADRESH2 = (ADRESH*100/51);
         }
         PIR1bits.ADIF = 0;          // Limpiamos bandera de interrupci?n
     }
@@ -92,7 +92,7 @@ void main(void) {
             
             ADCON0bits.GO = 1;              // Iniciamos proceso de conversi?n
         }
-        obtener_valor(t_ADRESH2);       // Valor para el PORTA
+        obtener_valor(t_ADRESH2);       // Valor para el temp
         set_display(valores[0],valores[1],valores[2]);  // seteo del display
     }
     return;
@@ -153,7 +153,7 @@ void RESET_TMR0(uint8_t TMR_VAR){
     return;
 }
 
-void obtener_valor(uint16_t VALOR){
+void obtener_valor(int VALOR){
     valores[2] = VALOR/100;                             // centenas
     valores[1] = (VALOR-valores[2]*100)/10;             // decenas
     valores[0] = VALOR-valores[2]*100-valores[1]*10;    // unidades
