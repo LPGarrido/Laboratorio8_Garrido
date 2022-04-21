@@ -2648,22 +2648,39 @@ extern __bank0 __bit __timeout;
 
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.35\\pic\\include\\c90\\stdint.h" 1 3
 # 30 "main_lab8.c" 2
-# 44 "main_lab8.c"
-void setup(void);
+# 42 "main_lab8.c"
+uint16_t t_ADRESH2 = 0;
+uint8_t temp = 0;
+uint8_t banderas = 0;
+uint8_t valores[3]={0,0,0};
+uint8_t display[3]={0,0,0};
+uint8_t TABLA[16]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0x39,0x5E,0x79,0x71};
 
+
+
+void setup(void);
+void RESET_TMR0(uint8_t TMR_VAR);
+void obtener_valor(uint16_t VALOR);
+void set_display(uint8_t VALORES0, uint8_t VALORES1, uint8_t VALORES2);
+void mostrar_valor(uint8_t DISPLAY0, uint8_t DISPLAY1, uint8_t DISPLAY2);
 
 
 
 void __attribute__((picinterrupt(("")))) isr (void){
     if(PIR1bits.ADIF){
         if(ADCON0bits.CHS == 0){
-            PORTC = ADRESH;
+            PORTB = ADRESH;
         }
 
         else if (ADCON0bits.CHS == 1){
-            PORTD = ADRESH;
+            t_ADRESH2 = (ADRESH*2);
         }
         PIR1bits.ADIF = 0;
+    }
+    else if (INTCONbits.T0IF){
+
+        mostrar_valor(display[0],display[1],display[2]);
+        RESET_TMR0(254);
     }
     return;
 }
@@ -2685,6 +2702,8 @@ void main(void) {
 
             ADCON0bits.GO = 1;
         }
+        obtener_valor(t_ADRESH2);
+        set_display(valores[0],valores[1],valores[2]);
     }
     return;
 }
@@ -2699,14 +2718,21 @@ void setup(void){
     TRISA = 0b00000011;
     PORTA = 0;
 
+    TRISB = 0;
+    PORTB = 0;
     TRISC = 0;
     PORTC = 0;
-    TRISD = 0;
+    TRISD = 0xF8;
     PORTD = 0;
 
 
     OSCCONbits.IRCF = 0b0110;
     OSCCONbits.SCS = 1;
+
+    OPTION_REGbits.T0CS = 0;
+    OPTION_REGbits.PSA = 0;
+    OPTION_REGbits.PS = 0b111;
+    TMR0 = 254;
 
 
     ADCON0bits.ADCS = 0b01;
@@ -2722,5 +2748,62 @@ void setup(void){
     PIE1bits.ADIE = 1;
     INTCONbits.PEIE = 1;
     INTCONbits.GIE = 1;
+    INTCONbits.T0IE = 1;
+    INTCONbits.T0IF = 0;
 
+}
+
+
+
+
+
+void RESET_TMR0(uint8_t TMR_VAR){
+    TMR0 = TMR_VAR;
+    INTCONbits.T0IF = 0;
+    return;
+}
+
+void obtener_valor(uint16_t VALOR){
+    valores[2] = VALOR/100;
+    valores[1] = (VALOR-valores[2]*100)/10;
+    valores[0] = VALOR-valores[2]*100-valores[1]*10;
+}
+
+void set_display(uint8_t VALORES0, uint8_t VALORES1, uint8_t VALORES2){
+    display[0] = TABLA[VALORES2];
+    display[1] = TABLA[VALORES1];
+    display[2] = TABLA[VALORES0];
+    return;
+}
+
+void mostrar_valor(uint8_t DISPLAY0, uint8_t DISPLAY1, uint8_t DISPLAY2){
+
+    PORTDbits.RD0 = 0;
+    PORTDbits.RD1 = 0;
+    PORTDbits.RD2 = 0;
+
+    switch (banderas)
+     {
+          case 0:
+            PORTC = DISPLAY0;
+            PORTDbits.RD0 = 1;
+            banderas = 1;
+            PORTDbits.RD7 = 1;
+            return;
+          case 1:
+            PORTC = DISPLAY1;
+            PORTDbits.RD1 = 1;
+            banderas = 2;
+            return;
+          case 2:
+            PORTC = DISPLAY2;
+            PORTDbits.RD2 = 1;
+            banderas = 0;
+            return;
+          default:
+            PORTC = 0b10000000;
+            PORTDbits.RD0 = 1;
+            banderas = 0;
+            return;
+     }
 }
